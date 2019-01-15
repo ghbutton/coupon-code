@@ -48,7 +48,7 @@ defmodule CouponCode.MixProject do
     [
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:earmark, "~> 1.0", only: :dev},
-      {:dialyxir, "~> 0.3", only: [:dev]}
+      {:dialyxir, "~> 0.5", only: [:dev]}
     ]
   end
 end
