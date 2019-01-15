@@ -8,16 +8,17 @@ defmodule CouponCode do
   @parts 3
   @length 4
 
-  @doc """
+  @doc ~S"""
   Generates a coupon code with the specified number of parts.
 
   ## Examples
-  #Seeding data so that example works
-  iex> :rand.seed(:exsplus, {101, 102, 103})
-  iex> CouponCode.generate()
-  "ALCB-J7Q6-15UB"
-  iex> CouponCode.generate([parts: 5])
-  "T59C-WMAD-KFEM-XQX2-NY4K"
+
+    iex> #Seeding data so that example works
+    iex> :rand.seed(:exsplus, {101, 102, 103})
+    iex> CouponCode.generate()
+    "ALCB-J7Q6-15UB"
+    iex> CouponCode.generate([parts: 5])
+    "T59C-WMAD-KFEM-XQX2-NY4K"
   """
   @spec generate([...]) :: String.t()
   def generate(options \\ [parts: @parts]) do
@@ -34,13 +35,13 @@ defmodule CouponCode do
     |> Enum.join("-")
   end
 
-  @doc """
+  @doc ~S"""
   Validates a coupon code with the specified number of parts.
 
   ## Examples
 
-  iex> CouponCode.validate("TPV1-EHPN-ZVKT")
-  {:ok, "TPV1-EHPN-2VKT"}
+    iex> CouponCode.validate("TPV1-EHPN-ZVKT")
+    {:ok, "TPV1-EHPN-2VKT"}
   """
   @spec validate(String.t(), Integer.t()) :: {:ok, String.t()} | {:error, String.t()}
   def validate(text, num_parts \\ @parts) do
