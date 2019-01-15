@@ -43,7 +43,7 @@ defmodule CouponCode do
       iex> CouponCode.validate("TPV1-EHPN-ZVKT")
       {:ok, "TPV1-EHPN-2VKT"}
   """
-  @spec validate(String.t(), Integer.t()) :: {:ok, String.t()} | {:error, String.t()}
+  @spec validate(String.t(), integer()) :: {:ok, String.t()} | {:error, String.t()}
   def validate(text, num_parts \\ @parts) do
     text =
       String.upcase(text)
@@ -67,10 +67,6 @@ defmodule CouponCode do
 
   defp validate_chunks([], _index, result) do
     {:ok, Enum.join(Enum.reverse(result), "-")}
-  end
-
-  defp validate_chunks(_chunks, _index, {:error, message}) do
-    {:error, message}
   end
 
   defp validate_chunks([chunk | rest], index, acc) do
