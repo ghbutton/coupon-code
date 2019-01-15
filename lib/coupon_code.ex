@@ -1,7 +1,7 @@
 defmodule CouponCode do
   @moduledoc """
-  This module implements a coupon generating algorithm described here: https://metacpan.org/pod/distribution/Algorithm-CouponCode/lib/Algorithm/CouponCode.pm
-
+  This module implements a coupon generating algorithm described [here](https://metacpan.org/pod/distribution/Algorithm-CouponCode/lib/Algorithm/CouponCode.pm).
+  With inspiration from the [ruby version](https://github.com/baxang/coupon-code).
   """
 
   @posibilities ~w(0 1 2 3 4 5 6 7 8 9 A B C D E F G H J K L M N P Q R T U V W X Y)
@@ -10,6 +10,14 @@ defmodule CouponCode do
 
   @doc """
   Generates a coupon code with the specified number of parts.
+
+  ## Examples
+  #Seeding data so that example works
+  iex> :rand.seed(:exsplus, {101, 102, 103})
+  iex> CouponCode.generate()
+  "ALCB-J7Q6-15UB"
+  iex> CouponCode.generate([parts: 5])
+  "T59C-WMAD-KFEM-XQX2-NY4K"
   """
   @spec generate([...]) :: String.t()
   def generate(options \\ [parts: @parts]) do
@@ -32,7 +40,7 @@ defmodule CouponCode do
   ## Examples
 
   iex> CouponCode.validate("TPV1-EHPN-ZVKT")
-  {:ok, "TPV1-EHPN-ZVKT"}
+  {:ok, "TPV1-EHPN-2VKT"}
   """
   @spec validate(String.t(), Integer.t()) :: {:ok, String.t()} | {:error, String.t()}
   def validate(text, num_parts \\ @parts) do
@@ -75,7 +83,7 @@ defmodule CouponCode do
     end
   end
 
-  def check_digit(text, check) do
+  defp check_digit(text, check) do
     text
     |> String.graphemes
     |> Enum.reduce(check, fn(character, check) ->

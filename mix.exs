@@ -4,13 +4,23 @@ defmodule CouponCode.MixProject do
   def project do
     [
       app: :coupon_code,
-      version: "0.1.0",
-      elixir: "~> 1.6",
+      version: "0.1.1",
+      elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-       description: "This fly into the sky",
-       aliases: aliases(),
-       package: package()
+      description: "Library for generating coupon codes",
+      aliases: aliases(),
+      package: package(),
+
+      # Docs
+      name: "CouponCode",
+      source_url: "https://github.com/ghbutton/coupon-code",
+      homepage_url: "https://github.com/ghbutton/coupon-code",
+      docs: [
+        main: "CouponCode", # The main page in the docs
+        #        logo: "path/to/logo.png",
+        extras: ["README.md"]
+      ]
     ]
   end
 
@@ -35,7 +45,10 @@ defmodule CouponCode.MixProject do
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
-   [
-   ]
+    [
+      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
+      {:earmark, "~> 1.0", only: :dev},
+      {:dialyxir, "~> 0.3", only: [:dev]}
+    ]
   end
 end
