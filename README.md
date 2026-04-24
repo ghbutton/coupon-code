@@ -14,4 +14,10 @@ def deps do
 end
 ```
 
+## Basic Usage
+```elixir
+coupon_code = CouponCode.generate()
+{:ok, _} = CouponCode.validate(coupon_code)
+```
+
 The docs can be found at [https://hexdocs.pm/coupon_code](https://hexdocs.pm/coupon_code).

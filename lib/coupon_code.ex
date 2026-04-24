@@ -9,24 +9,31 @@ defmodule CouponCode do
   @length 4
 
   @doc ~S"""
-  Generates a coupon code with the specified number of parts.
+  Generates a coupon code.
+
+  Accepts a keyword list of options:
+
+    * `:parts`  — number of dash-separated parts (default `#{@parts}`)
+    * `:length` — number of characters per part, including the checksum
+      character (default `#{@length}`)
 
   ## Examples
 
-      iex> #Seeding data so that example works
-      iex> :rand.seed(:exsplus, {101, 102, 103})
-      iex> CouponCode.generate()
-      "ALCB-J7Q6-15UB"
-      iex> CouponCode.generate([parts: 5])
-      "T59C-WMAD-KFEM-XQX2-NY4K"
+    iex> coupon_code = CouponCode.generate()
+    iex> {:ok, _} = CouponCode.validate(coupon_code)
+    iex> longer_coupon_code = CouponCode.generate([parts: 5])
+    iex> {:ok, _} = CouponCode.validate(longer_coupon_code, 5)
+    iex> wide_coupon_code = CouponCode.generate(parts: 2, length: 6)
+    iex> {:ok, _} = CouponCode.validate(wide_coupon_code, 2, 6)
   """
-  @spec generate([...]) :: String.t()
-  def generate(options \\ [parts: @parts]) do
-    num_parts = options[:parts]
+  @spec generate(keyword()) :: String.t()
+  def generate(options \\ []) do
+    num_parts = options[:parts] || @parts
+    length = options[:length] || @length
 
     for num_part <- 1..num_parts do
       part =
-        for _ <- 1..@length - 1 do
+        for _ <- 1..length - 1 do
           random_symbol()
         end
         |> Enum.join("")
@@ -36,15 +43,26 @@ defmodule CouponCode do
   end
 
   @doc ~S"""
-  Validates a coupon code with the specified number of parts.
+  Validates a coupon code.
+
+  Takes the raw coupon `text`, the expected number of parts (`num_parts`,
+  default `#{@parts}`), and the expected length of each part (`length`,
+  default `#{@length}`). The two numeric arguments must match the values
+  passed to `generate/1` when the code was created.
+
+  Returns `{:ok, normalized_code}` on success (with ambiguous characters
+  mapped: `O`→`0`, `I`→`1`, `Z`→`2`, `S`→`5`), or `{:error, reason}`.
 
   ## Examples
 
       iex> CouponCode.validate("TPV1-EHPN-ZVKT")
       {:ok, "TPV1-EHPN-2VKT"}
+
+      iex> code = CouponCode.generate(parts: 4, length: 6)
+      iex> {:ok, _} = CouponCode.validate(code, 4, 6)
   """
-  @spec validate(String.t(), integer()) :: {:ok, String.t()} | {:error, String.t()}
-  def validate(text, num_parts \\ @parts) do
+  @spec validate(String.t(), integer(), integer()) :: {:ok, String.t()} | {:error, String.t()}
+  def validate(text, num_parts \\ @parts, length \\ @length) do
     text =
       String.upcase(text)
       |> String.replace(~r/[^0-9A-Z]+/, "")
@@ -56,25 +74,25 @@ defmodule CouponCode do
     chunks =
       text
       |> String.graphemes
-      |> Enum.chunk_every(@length)
+      |> Enum.chunk_every(length)
 
     if length(chunks) == num_parts do
-      validate_chunks(chunks, 0, [])
+      validate_chunks(chunks, 0, length, [])
     else
       {:error, "Incorrect number of parts"}
     end
   end
 
-  defp validate_chunks([], _index, result) do
+  defp validate_chunks([], _index, _length, result) do
     {:ok, Enum.join(Enum.reverse(result), "-")}
   end
 
-  defp validate_chunks([chunk | rest], index, acc) do
-    text = Enum.slice(chunk, 0..-2) |> Enum.join()
+  defp validate_chunks([chunk | rest], index, length, acc) do
+    text = Enum.slice(chunk, 0..-2//1) |> Enum.join()
     check = Enum.slice(chunk, -1..-1) |> hd
 
-    if check_digit(text, index + 1) == check && length(chunk) == @length do
-      validate_chunks(rest, index + 1, [text <> check | acc])
+    if check_digit(text, index + 1) == check && length(chunk) == length do
+      validate_chunks(rest, index + 1, length, [text <> check | acc])
     else
       {:error, "Checksum did not match"}
     end

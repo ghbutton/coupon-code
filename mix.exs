@@ -4,8 +4,8 @@ defmodule CouponCode.MixProject do
   def project do
     [
       app: :coupon_code,
-      version: "0.1.3",
-      elixir: "~> 1.7",
+      version: "0.2.0",
+      elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: "Library for generating coupon codes",
@@ -47,8 +47,7 @@ defmodule CouponCode.MixProject do
   defp deps do
     [
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
-      {:earmark, "~> 1.0", only: :dev},
-      {:dialyxir, "~> 0.5", only: [:dev]}
+      {:dialyxir, "~> 1.4", only: [:dev], runtime: false}
     ]
   end
 end
