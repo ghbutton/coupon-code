@@ -9,7 +9,7 @@ The package can be installed by adding `coupon_code` to your list of dependencie
 ```elixir
 def deps do
   [
-    {:coupon_code, "~> 0.1.0"}
+    {:coupon_code, "~> 0.2.0"}
   ]
 end
 ```
